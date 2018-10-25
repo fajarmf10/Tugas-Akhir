@@ -1,0 +1,4 @@
+- Mempresentasikan paper "Classification and Numbering of Dental Radiographs for an Automated Human Identification System"
+
+1) Running CBCT yang ada untuk memahami bagaimana program tersebut berjalan.
+2) Plan A, segmentasi gambar. Plan B, ketika plan A sudah berhasil, implementasi penomoran pada 3 dimensi.
