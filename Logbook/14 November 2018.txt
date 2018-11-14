@@ -1,0 +1,3 @@
+Sudah running Program. Sedang berusaha konversi ke Python 3 dari Matlab, serta sedang belajar Matlab.
+
+Next : Mempelajari Expectation-Maximization Algorithm, serta membaca referensi Statistical Region Merging (Nock & Nielsen)
