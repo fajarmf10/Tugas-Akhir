@@ -6,3 +6,5 @@ mbak Raras/3D Region Merging/smop/
 mbak Raras/Port-Py/\.idea/
 
 mbak Raras/Port-Py/Data/
+
+mbak Raras/Port-Py/3d-region-merging/__pycache__/

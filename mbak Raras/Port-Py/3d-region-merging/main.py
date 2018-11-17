@@ -1,10 +1,9 @@
 import cv2 as cv
 from matplotlib import pyplot as plt
-import numpy, time
-
+import numpy as np, time
+from EMTresh import em_tresh
 
 def tic():
-    #Homemade version of matlab tic and toc functions
     import time
     global startTime_for_tictoc
     startTime_for_tictoc = time.time()
@@ -27,10 +26,9 @@ def srm3d(I, Q, dim):
 
 def thresholding(img):
     k, num_bins = 4, 256
-    # hist = cv.calcHist([img], [0], None, [256], [0,256])
-    hist = numpy.array(cv.calcHist([img], [0], None, [256], [0, 256]))
-    hist = hist.astype(int)
-    borders, mu, v, p = EMThresh(img, k)
+    hist = cv.calcHist([img], [0], None, [256], [0, 256])
+    hist = np.transpose(hist).astype(int)
+    borders, mu, v, p = em_tresh(img, k)
     t = borders[3]/256
     return t
 
@@ -53,7 +51,8 @@ if __name__ == '__main__':
         for j in range(start, num):
             path = input_dir + str(j) + ".bmp"
             img = cv.imread(path)
-            # t2d[j-start+1] = thresholding(img)
+            # print(type(img))
+            t2d[j-start+1] = thresholding(img)
             imreg2 = srm3d(img.astype(float), Q, 2)
             print("A")
 
