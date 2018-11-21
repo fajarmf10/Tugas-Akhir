@@ -44,7 +44,7 @@ def histogram(datos):
     # np.savetxt("notprocessed.csv", h, fmt='%i', delimiter=",")
     h = np.convolve(h, [1,2,3,2,1])
     # np.savetxt("convolved.csv", h, fmt='%i', delimiter=",")
-    h = h[3:len(h)-2]
+    h = h[2:len(h)-2]
     # np.savetxt("len.csv", h, fmt='%i', delimiter=",")
     # Result of sum is different than the matlab version
     h = h/np.sum(h)
