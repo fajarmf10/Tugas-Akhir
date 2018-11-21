@@ -35,7 +35,7 @@ def thresholding(img):
 
 if __name__ == '__main__':
     datadir = "../Data/"
-    name = "1_Bpk_Setyo"
+    name = "3_Nn_Kartika_Afrida_Fauzia"
     input_dir = datadir + name + "/axial/"
 
     start = 1

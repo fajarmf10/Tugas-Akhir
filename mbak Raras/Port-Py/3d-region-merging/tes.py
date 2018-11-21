@@ -35,5 +35,12 @@ def histogram(datas):
 
 if __name__ == '__main__':
     # a = np.random.randint(0, 10, (266, 266))
-    a = np.zeros((266,266,1))
-    print(a)
+    # a = np.zeros((266,266,1))
+    # a[23][32] = np.nan
+    # print(a[23][32])
+    # np.nan_to_num(a, copy=False).astype(int)
+    # print(a[23][32])
+    a = np.zeros((1, 236))
+    print(a.size)
+
+
