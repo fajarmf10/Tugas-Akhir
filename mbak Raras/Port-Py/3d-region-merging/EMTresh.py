@@ -20,6 +20,58 @@ from scipy.ndimage.interpolation import shift
 
 '''
 
+def distribution(m, v, g, x):
+    #check instance
+    if isinstance(m, np.ndarray):
+        # x = x.transpose()
+        # m = m.transpose()
+        # v = v.transpose()
+        # g = g.transpose()
+        # Initialize variable y
+        y = np.zeros((x.size, m.size))
+        for i in range(np.size(m)):
+            d = x - m[i]
+            # np.savetxt("alala.csv", d, delimiter=",")
+            amp = g[i] / np.sqrt(2 * np.pi * v[i])
+            # ans = amp*np.exp(-0,5 * (np.multiply(d, d))/v[i])
+            y[:, i] = np.dot(amp, np.exp(np.dot(- 0.5, (np.multiply(d, d))) / v[i]))
+    else:
+        sizem = m.size
+        for i in range(m.size):
+            d = x-m
+            amp = g/np.sqrt(2 * np.pi * v)
+            y = np.dot(amp, np.exp(np.dot(- 0.5, (np.multiply(d, d))) / v))
+    # No need to transpose
+    # x = x.transpose()
+    # m = m.transpose()
+    # v = v.transpose()
+    # g = g.transpose()
+    # # Initialize variable y
+    # y = np.zeros((x.size, m.size))
+    # for i in range(np.size(m)):
+    #     d = x - m[i]
+    #     # np.savetxt("alala.csv", d, delimiter=",")
+    #     amp = g[i]/np.sqrt(2*np.pi*v[i])
+    #     ans = np.dot(amp,np.exp(np.dot(- 0.5,(np.multiply(d,d))) / v[i]))
+    #     # ans = amp*np.exp(-0,5 * (np.multiply(d, d))/v[i])
+    #     y[:,i] = ans
+    # # np.savetxt("distribution.csv", y, delimiter=",")
+    return(y)
+
+
+def find(arr, cond):
+    # Implemented find function from Matlab
+    if(isinstance(arr, np.ndarray)):
+        return [i for (i, val) in np.ndenumerate(arr) if cond(val)]
+    return [i for (i, val) in enumerate(arr) if cond(val)]
+
+
+def find2(arr, cond):
+    a = np.max(arr)
+    return np.where(arr == a)
+    # for(i, val) in np.ndenumerate(arr):
+
+
 
 def histogram(datos):
     datos = datos.flatten('F')
@@ -49,7 +101,7 @@ def histogram(datos):
     # Result of sum is different than the matlab version
     h = h/np.sum(h)
     # np.savetxt("sum.csv", h, delimiter=",")
-    return h
+    return(h)
 
 
 def em_tresh(ima, k):
@@ -70,6 +122,71 @@ def em_tresh(ima, k):
     m = np.max(ima).astype(int)
     s = ima.size
     h = histogram(ima)
-    # print('a')
+    x = find(h, lambda x: x>0)
+    # np.savetxt("find.csv", x, fmt='%i', delimiter=",")
+    h = h[x]
+    # np.savetxt("change.csv", h, delimiter=",")
+    x = np.transpose(x) + 1
+    h = np.transpose(h)
+    mu = np.dot(np.arange(1, k+1), m) / (k+1)
+    v = np.dot(np.ones(k), m)
+    p = np.dot(np.ones(k), 1) / k
 
+    sml = np.mean(np.diff(x))/1000
+    # print("SML : ", sml)
+    #Begin EM Algorithm
+    while(1):
+        # Expectation
+        prb = distribution(mu, v, p, x)
+        scal = np.sum(prb, 1) + np.spacing(1)
+        # np.savetxt("scal.csv", scal, delimiter=",")
+        loglik = np.sum(np.multiply(h, np.log(scal)))
+        # print(loglik)
+        # loglik = np.sum(h*(np.log(scal)))
 
+        # Maximization
+        for j in range(k):
+            pp = np.multiply(h, prb[:, j]) / scal
+            # np.savetxt("pp.csv", pp, delimiter=",")
+            p[j] = np.sum(pp)
+            mu[j] = np.sum(np.multiply(x, pp)) / p[j]
+            # print(mu[j])
+            vr = (x-mu[j])
+            # np.savetxt("vr.csv", vr, delimiter=",")
+            v[j] = np.sum(np.multiply(np.multiply(vr, vr), pp)) / p[j] + sml
+            # print(v[j])
+        p = p + 0.001
+        p = p / np.sum(p)
+
+        # Exit condition
+        prb = distribution(mu, v, p, x)
+        scal = np.sum(prb, 1) + np.spacing(1)
+        nloglik = np.sum(np.multiply(h, np.log(scal)))
+
+        if(nloglik-loglik) < 0.0001:
+            break
+
+    mu = mu + mi - 1
+    s = np.shape(x)[1]
+    mask = np.zeros(s)
+
+    hist_class = np.zeros(s)
+    for i in range(s):
+        c = np.zeros(k)
+        for n in range(k):
+            c[n] = distribution(mu[n], v[n], p[n], x[0][i])
+        a = np.where(c == np.max(c))
+        # print(a[0])
+        # print(a[0][0])
+        hist_class[i] = a[0][0]
+    np.savetxt("histclass.csv", hist_class, delimiter=",")
+
+    borders = np.zeros((k-1,1))
+    for i in range(1, hist_class.size):
+        if(hist_class[i-1] < hist_class[i]):
+            # print(hist_class[i-1])
+            borders[hist_class[i-1].astype(int)] = i-1
+        # print(i)
+    borders = borders+1
+    # print("AAAAAA")
+    return(borders, mu, v, p)
