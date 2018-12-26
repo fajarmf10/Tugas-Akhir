@@ -48,6 +48,8 @@ def show_images(images, cols=1, titles=None):
 
 if __name__=='__main__':
     img = cv.imread('../../Datasets/Bitewing/2.jpg')
+    # Denoising
+    img = cv.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
     # Convert to Grayscale
     img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     # Resizing image
@@ -55,16 +57,16 @@ if __name__=='__main__':
     # Equalizing Hist
     equ = cv.equalizeHist(img)
     # CLAHE
-    clahe = cv.createCLAHE(clipLimit=4.0, tileGridSize=(8,8))
+    clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     cl1 = clahe.apply(equ)
 
     # Binarizing image using Otsu's Tresholding
-    ret2, th2 = cv.threshold(cl1, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+    ret2, otsu = cv.threshold(cl1, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
-    plot_hist([equ, cl1, th2], cols=3, titles=[
-        'Equalized', 'CLAHE', 'Binarized'
-    ])
+    # plot_hist([equ, cl1, otsu, d1, d2], cols=3, titles=[
+    #     'Equalized', 'CLAHE', 'Otsu'
+    # ])
 
-    show_images([equ, cl1, th2], cols=3, titles=[
-        'Equalized', 'CLAHE', 'Binarized'
+    show_images([equ, cl1, otsu], cols=3, titles=[
+        'Equalized', 'CLAHE', 'Otsu'
     ])
