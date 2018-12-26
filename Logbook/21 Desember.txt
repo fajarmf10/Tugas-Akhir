@@ -1,0 +1,4 @@
+Presentasi 3D Region Merging.
+Step 1, menentukan luas, tinggi, dan lain-lain dari gigi individual.
+Step 2, mengklasifikasikan gigi serta penomoran.
+Selanjutnya, menjalankan step 1 dan step 2.
